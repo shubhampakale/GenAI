@@ -1,22 +1,17 @@
 from google import genai
 
-api_key = "AIzaSyDMBCJtnR5D8s6i-DQSgF-6Wg8AWZWFhNc"
-
+api_key = "AIzaSyDMBCJtnR5D8s6i-DQSgF-6Wg8AWZWFhNc"  # Replace with your actual API key
 client = genai.Client(api_key=api_key)
-
-# Initialize conversation history
-conversation = []
+chat = client.chats.create(model="gemini-2.5-flash")
 
 while True:
     user_input = input("You: ")
     if user_input.lower() in ["exit", "quit"]:
         print("Exiting chat.")
         break
-    conversation.append({"role": "user", "parts": [{"text": user_input}]})
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=conversation
-    )
-    model_output = response.text
-    print("Model:", model_output)
-    conversation.append({"role": "model", "parts": [{"text": model_output}]})
+    response = chat.send_message(user_input)
+    print("Model:", response.text)
+
+print("\nConversation history:")
+for message in chat.get_history():
+    print(f'role - {message.role}: {message.parts[0].text}')
